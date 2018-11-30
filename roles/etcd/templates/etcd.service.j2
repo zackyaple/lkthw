@@ -1,0 +1,33 @@
+{%- set private_ip = hostvars[inventory_hostname]['ansible_vlan43']['ipv4']['address'] -%}
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+User=etcd
+Type=notify
+Environment=ETCD_DATA_DIR=/var/lib/etcd
+Environment=ETCD_NAME=%H
+Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=https://%H:2380
+Environment=ETCD_INITIAL_CLUSTER=yaple001=https://yaple001:2380,yaple002=https://yaple002:2380,yaple003=https://yaple003:2380
+Environment=ETCD_INITIAL_CLUSTER_STATE=new
+Environment=ETCD_INITIAL_CLUSTER_TOKEN=a40890d2b11834b97affd2a95375b972109c4644a93b0a63f205de8353c9
+Environment=ETCD_ADVERTISE_CLIENT_URLS=https://%H:2379
+Environment=ETCD_LISTEN_PEER_URLS=https://{{ private_ip }}:2380
+Environment=ETCD_LISTEN_CLIENT_URLS=https://{{ private_ip }}:2379
+Environment=ETCD_CERT_FILE=/etc/etcd/cert.pem
+Environment=ETCD_KEY_FILE=/etc/etcd/key.pem
+Environment=ETCD_TRUSTED_CA_FILE=/etc/etcd/ca.pem
+Environment=ETCD_PEER_TRUSTED_CA_FILE=/etc/etcd/ca.pem
+Environment=ETCD_PEER_CERT_FILE=/etc/etcd/cert.pem
+Environment=ETCD_PEER_KEY_FILE=/etc/etcd/key.pem
+Environment=ETCD_CLIENT_CERT_AUTH=True
+Environment=ETCD_PEER_CLIENT_CERT_AUTH=True
+Restart=always
+RestartSec=10s
+LimitNOFILE=40000
+ExecStart=/usr/local/bin/etcd
+
+[Install]
+WantedBy=multi-user.target
+
