@@ -1,0 +1,13 @@
+{%- set kubernetes_encryption_secret = '4557f29ca83001d7c3691f281d87bee8da546f20931a86ff6608d09360cb' -%}
+
+kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: {{ kubernetes_encryption_secret }}
+      - identity: {}

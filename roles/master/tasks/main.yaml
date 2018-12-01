@@ -1,0 +1,53 @@
+---
+
+# TODO: Provide verification of these binaries with hashes
+- name: Fetch kubernetes binaries
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/{{ kubernetes_version }}/bin/linux/amd64/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+
+- name: Make kubernetes directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - /var/lib/kubernetes
+    - /etc/kubernetes/config
+
+- name: Copy Kubernetes config files
+  template:
+    src: "{{ item }}.j2"
+    dest: /var/lib/kubernetes/{{ item }}
+  with_items:
+    - encryption-config.yaml
+    - admin.kubeconfig
+    - kube-controller-manager.kubeconfig
+    - kube-scheduler.kubeconfig
+
+- name: Install systemd service files
+  template:
+    src: "{{ item }}.service.j2"
+    dest: /etc/systemd/system/{{ item }}.service
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+- name: Reload systemd service files
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Kubernetes services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
