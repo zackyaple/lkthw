@@ -1,8 +1,8 @@
 [Unit]
-Description=Open vSwitch Delete Transient Ports
+Description=OVS Delete Transient Ports
 After=ovs-db.service
 Before=ovs-switch.service
-AssertPathExists=/run/openvswitch/db.sock
+AssertPathIsReadWrite=/run/openvswitch/db.sock
 
 [Service]
 Type=oneshot

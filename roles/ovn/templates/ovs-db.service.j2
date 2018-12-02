@@ -1,4 +1,3 @@
-{%- set private_ip = hostvars[inventory_hostname]['ansible_vlan43']['ipv4']['address'] -%}
 [Unit]
 Description=OVS Database
 Before=network.target network.service

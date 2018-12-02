@@ -40,3 +40,10 @@
      state: started
      enabled: yes
      daemon_reload: yes
+
+- name: Start ovn-controller service
+  service:
+     name: ovn-controller
+     state: started
+     enabled: yes
+     daemon_reload: yes
