@@ -1,0 +1,28 @@
+[Unit]
+Description=OVN Northd
+Requires=ovs-switch.service
+After=ovs-switch.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+Environment=OVS_RUNDIR=/run/openvswitch
+Environment=OVS_DBDIR=/var/lib/openvswitch
+
+ExecStart=/usr/share/openvswitch/scripts/ovn-ctl \
+  --ovnnb-db="
+  {%- for ip in (groups['master'] | map('extract', hostvars, ['ansible_vlan43', 'ipv4', 'address'])) -%}
+    tcp:{{ ip }}:6641
+    {%- if not loop.last -%},{%- endif -%}
+  {%- endfor %}" \
+  --ovnsb-db="
+  {%- for ip in (groups['master'] | map('extract', hostvars, ['ansible_vlan43', 'ipv4', 'address'])) -%}
+    tcp:{{ ip }}:6642
+    {%- if not loop.last -%},{%- endif -%}
+  {%- endfor %}" \
+  start_northd
+ExecStop=/usr/share/openvswitch/scripts/ovn-ctl stop_northd
+
+[Install]
+WantedBy=multi-user.target

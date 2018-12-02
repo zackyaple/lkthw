@@ -1,0 +1,35 @@
+---
+
+- name: Add OVS apt signing key
+  apt_key:
+    url: http://18.191.116.101/openvswitch/keyFile
+    state: present
+
+- name: Add OVS repo
+  apt_repository:
+    repo: deb http://18.191.116.101/openvswitch/stable /
+    state: present
+    filename: openvswitch
+
+- name: Install OVS
+  apt:
+    name:
+      - openvswitch-common
+      - openvswitch-switch
+      - ovn-central
+      - ovn-common
+      - ovn-host
+
+- name: Setup systemd service files
+  template:
+    src: "{{ item }}.service.j2"
+    dest: /etc/systemd/system/{{ item }}.service
+  with_items:
+    - ovn-northbound-db
+    - ovn-northd
+    - ovn-southbound-db
+    - ovs-db
+    - ovs-delete-transient-ports
+    - ovs-switch
+  notify:
+    - Start {{ item }} service

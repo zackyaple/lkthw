@@ -1,0 +1,14 @@
+[Unit]
+Description=OVN Controller
+Requires=ovs-switch.service
+After=ovs-switch.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+ExecStart=/usr/share/openvswitch/scripts/ovn-ctl --no-monitor start_controller
+ExecStop=/usr/share/openvswitch/scripts/ovn-ctl stop_controller
+
+[Install]
+WantedBy=multi-user.target

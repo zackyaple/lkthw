@@ -1,0 +1,24 @@
+{%- set private_ip = hostvars[inventory_hostname]['ansible_vlan43']['ipv4']['address'] -%}
+[Unit]
+Description=OVS Database
+Before=network.target network.service
+Wants=ovs-delete-transient-ports.service
+
+[Service]
+Type=forking
+Restart=on-failure
+
+RuntimeDirectory=openvswitch
+RuntimeDirectoryMode=0755
+
+ExecStart=/usr/share/openvswitch/scripts/ovs-ctl \
+  --system-id=random \
+  --no-monitor \
+  --no-ovs-vswitchd \
+  start
+ExecStop=/usr/share/openvswitch/scripts/ovs-ctl \
+  --no-ovs-vswitchd \
+  stop
+
+[Install]
+WantedBy=multi-user.target

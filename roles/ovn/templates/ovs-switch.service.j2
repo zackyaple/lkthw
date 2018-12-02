@@ -1,0 +1,23 @@
+[Unit]
+Description=OVS vSwitch
+Before=network.target network.service
+Requires=ovs-db.service
+ReloadPropagatedFrom=ovs-db.service
+AssertPathIsReadWrite=/run/openvswitch/db.sock
+
+[Service]
+Type=forking
+Restart=on-failure
+TimeoutSec=300
+
+ExecStart=/usr/share/openvswitch/scripts/ovs-ctl \
+  --system-id=random \
+  --no-monitor \
+  --no-ovsdb-server \
+  start
+ExecStop=/usr/share/openvswitch/scripts/ovs-ctl \
+  --no-ovsdb-server \
+  stop
+
+[Install]
+WantedBy=multi-user.target

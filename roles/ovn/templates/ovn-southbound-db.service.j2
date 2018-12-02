@@ -1,0 +1,20 @@
+{%- set private_ip = hostvars[inventory_hostname]['ansible_vlan43']['ipv4']['address'] -%}
+{%- set master_ip = hostvars[groups['master'][0]]['ansible_vlan43']['ipv4']['address'] -%}
+[Unit]
+Description=OVN Southbound OVS Database
+After=network.target
+Requires=ovs-db.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStop=/usr/share/openvswitch/scripts/ovn-ctl stop_sb_ovsdb
+ExecStart=/usr/share/openvswitch/scripts/ovn-ctl \
+  --db-sb-cluster-local-addr={{ private_ip }} \
+  {% if master_ip != private_ip -%}
+  --db-sb-cluster-remote-addr={{ master_ip }} \
+  {% endif -%}
+  start_sb_ovsdb
+
+[Install]
+WantedBy=multi-user.target
