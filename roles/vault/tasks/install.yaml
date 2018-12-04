@@ -1,0 +1,44 @@
+---
+
+- name: Fetch Vault archive
+  get_url:
+    url: https://releases.hashicorp.com/vault/{{ vault_version }}/{{ item }}
+    dest: /tmp/{{ item }}
+    force: yes
+  with_items:
+    - vault_{{ vault_version }}_linux_amd64.zip
+    - vault_{{ vault_version }}_SHA256SUMS
+    - vault_{{ vault_version }}_SHA256SUMS.sig
+
+- name: Verify signature on hashes
+  command: gpg --verify /tmp/vault_{{ vault_version }}_SHA256SUMS.sig /tmp/vault_{{ vault_version }}_SHA256SUMS
+
+- name: Get Vault archive hash
+  stat:
+    path: /tmp/vault_{{ vault_version }}_linux_amd64.zip
+    checksum_algorithm: sha256
+  register: zipfile
+
+- name: Get expected hash
+  command: awk '/linux_amd64/ {print $1}' /tmp/vault_{{ vault_version }}_SHA256SUMS
+  register: hash
+
+- name: Fail when checksums break
+  when: hash.stdout != zipfile.stat.checksum
+  fail:
+    msg: Bad checksums
+
+- name: Extract Vault binary
+  unarchive:
+    src: /tmp/vault_{{ vault_version }}_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Cleanup files
+  file:
+    name: /tmp/{{ item }}
+    state: absent
+  with_items:
+    - vault_{{ vault_version }}_linux_amd64.zip
+    - vault_{{ vault_version }}_SHA256SUMS
+    - vault_{{ vault_version }}_SHA256SUMS.sig

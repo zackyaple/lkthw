@@ -1,2 +1,10 @@
-[allinone]
+[all-in-ones]
 yaple001-mgmt ansible_user=ansible
+yaple002-mgmt ansible_user=ansible
+yaple003-mgmt ansible_user=ansible
+
+[master:children]
+all-in-ones
+
+[worker:children]
+all-in-ones

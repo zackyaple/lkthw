@@ -2,5 +2,15 @@
 - hosts: all
   roles:
     - etcd
+    - vault
+  become: yes
+
+- hosts: masterXXXX
+  roles:
     - master
+  become: yes
+
+- hosts: workerXXXX
+  roles:
+    - worker
   become: yes
