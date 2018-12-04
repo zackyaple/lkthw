@@ -10,6 +10,9 @@
     - vault_{{ vault_version }}_SHA256SUMS
     - vault_{{ vault_version }}_SHA256SUMS.sig
 
+- name: Import Hashicorp gpg key
+  command: gpg --keyserver keyserver.ubuntu.com --recv 51852D87348FFC4C
+
 - name: Verify signature on hashes
   command: gpg --verify /tmp/vault_{{ vault_version }}_SHA256SUMS.sig /tmp/vault_{{ vault_version }}_SHA256SUMS
 
@@ -23,10 +26,10 @@
   command: awk '/linux_amd64/ {print $1}' /tmp/vault_{{ vault_version }}_SHA256SUMS
   register: hash
 
-- name: Fail when checksums break
-  when: hash.stdout != zipfile.stat.checksum
+- name: Fail when checksums do not match
   fail:
-    msg: Bad checksums
+    msg: Checksums do not match ({{ hash.stdout }} != {{ zipfile.stat.checksum }})
+  when: hash.stdout != zipfile.stat.checksum
 
 - name: Extract Vault binary
   unarchive:
