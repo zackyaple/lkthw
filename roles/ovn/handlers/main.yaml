@@ -1,0 +1,49 @@
+---
+- name: Start ovs-db service
+  service:
+     name: ovs-db
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovs-delete-transient-ports service
+  service:
+     name: ovs-delete-transient-ports
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovs-switch service
+  service:
+     name: ovs-switch
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovn-northbound-db service
+  service:
+     name: ovn-northbound-db
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovn-southbound-db service
+  service:
+     name: ovn-southbound-db
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovn-northd service
+  service:
+     name: ovn-northd
+     state: started
+     enabled: yes
+     daemon_reload: yes
+
+- name: Start ovn-controller service
+  service:
+     name: ovn-controller
+     state: started
+     enabled: yes
+     daemon_reload: yes

@@ -1,5 +1,5 @@
 [all-in-ones]
-yaple001-mgmt ansible_user=ansible
+asta ansible_user=ansible
 yaple002-mgmt ansible_user=ansible
 yaple003-mgmt ansible_user=ansible
 

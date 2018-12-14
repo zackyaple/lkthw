@@ -3,14 +3,6 @@
   roles:
     - etcd
     - vault
-  become: yes
-
-- hosts: masterXXXX
-  roles:
+    - ovn
     - master
-  become: yes
-
-- hosts: workerXXXX
-  roles:
-    - worker
   become: yes

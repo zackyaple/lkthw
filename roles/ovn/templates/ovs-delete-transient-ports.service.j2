@@ -1,0 +1,10 @@
+[Unit]
+Description=OVS Delete Transient Ports
+After=ovs-db.service
+Before=ovs-switch.service
+AssertPathIsReadWrite=/run/openvswitch/db.sock
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/share/openvswitch/scripts/ovs-ctl delete-transient-ports
