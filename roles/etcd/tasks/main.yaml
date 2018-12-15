@@ -1,5 +1,7 @@
 ---
 
+- include_tasks: install.yaml
+
 - name: Setup etcd service file
   template:
     src: etcd.service.j2

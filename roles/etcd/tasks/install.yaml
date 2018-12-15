@@ -1,0 +1,29 @@
+---
+
+- name: Fetch etcd binaries
+  get_url:
+    url: https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/{{ item }}
+    dest: /tmp/{{ item }}
+    force: yes
+  with_items:
+    - etcd-{{ etcd_version }}-linux-amd64.tar.gz
+    - etcd-{{ etcd_version }}-linux-amd64.tar.gz.asc
+
+- fail: msg='no u'
+
+- name: Extract etcd binary
+  unarchive:
+    src: /tmp/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Configure etcd server
+  file:
+    path: /etc/etsd
+    path: /var/lib/etcd
+    state: directory
+
+
+
+
+
